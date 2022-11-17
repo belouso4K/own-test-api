@@ -1,29 +1,40 @@
 version: '3.8'
 services:
   app:
+    container_name: api_app
     build:
-      context: ./
-      dockerfile: app.dockerfile
-    working_dir: /var/www
+      context: .
+      dockerfile: _docker/app/Dockerfile
+#    working_dir: /var/www
     volumes:
       - ./:/var/www
     depends_on:
-      - "database"
+      - db
   web:
-    build:
-      context: ./
-      dockerfile: web.dockerfile
+    image: nginx:latest
+    container_name: api_web
+#    build:
+#      context: ./
+#      dockerfile: web.dockerfile
     working_dir: /var/www
     volumes:
       - ./:/var/www
+      - ./_docker/nginx/conf.d:/etc/nginx/conf.d
     ports:
       - 8000:80
-  database:
+    depends_on:
+      - app
+  db:
     image: mysql:8.0.25
+    container_name: api_db
+    volumes:
+      - ./tmp/db:/var/lib/mysql
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: my-secret-pw
       MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
     ports:
       - 33061:3306
   mailhog:
@@ -34,14 +45,14 @@ services:
       - 1025:1025
       - 8025:8025
   pma:
-    image: phpmyadmin:5.1
+    image: phpmyadmin:latest
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=${DB_HOST}
-      - PMA_PASSWORD=${DB_PASSWORD}
       - PMA_PORT=${DB_PORT}
+    restart: always
     depends_on:
-      - database
+      - db
     ports:
       - 8888:80
 

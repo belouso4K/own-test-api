@@ -9,5 +9,5 @@ Route::group(['middleware' => 'guest'], function () {
 Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::get('/db', function () {
-    return 'wqfqf12345678654';
+    return 'wqfqssesf213';
 });
