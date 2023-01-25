@@ -36,7 +36,7 @@ services:
     container_name: api_db
     restart: always
     volumes:
-      - ./tmp/db:/var/lib/mysql
+      - phpmyadmin_data:/var/lib/mysql
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -64,7 +64,7 @@ services:
       - PMA_ARBITRARY=1
       - PMA_HOST=${DB_HOST}
       - PMA_PORT=${DB_PORT}
-    restart: always
+#    restart: always
     depends_on:
       - db
     ports:
@@ -72,6 +72,7 @@ services:
     networks:
       - mynet
 
-
+volumes:
+  phpmyadmin_data:
 networks:
   mynet:
