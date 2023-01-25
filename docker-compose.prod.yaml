@@ -33,7 +33,6 @@ services:
 
   db:
     image: mysql:8.0.25
-    container_name: api_db
     restart: always
     volumes:
       - phpmyadmin_data:/var/lib/mysql
@@ -45,16 +44,6 @@ services:
       MYSQL_USER: ${DB_USERNAME}
     ports:
       - 3306:3306
-    networks:
-      - mynet
-
-  mailhog:
-    image: mailhog/mailhog:latest
-    logging:
-      driver: 'none'
-    ports:
-      - 1025:1025
-      - 8025:8025
     networks:
       - mynet
 
