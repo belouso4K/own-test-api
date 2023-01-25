@@ -1,77 +1,77 @@
 version: '3.8'
-  services:
-    app:
-      container_name: api_app
-      build:
-        context: .
-        dockerfile: _docker/app/Dockerfile
-  #    working_dir: /var/www
-      volumes:
-        - ./:/var/www
-      depends_on:
-        - db
-      networks:
-        - mynet
+services:
+  app:
+    container_name: api_app
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+#    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+    networks:
+      - mynet
 
-    web:
-      image: nginx:latest
-      container_name: api_web
-  #    build:
-  #      context: ./
-  #      dockerfile: web.dockerfile
-      working_dir: /var/www
-      volumes:
-        - ./:/var/www
-        - ./_docker/prod/nginx/conf.d:/etc/nginx/conf.d
-        - ./storage/app:/var/www/storage/app:ro
-      ports:
-        - 8000:80
-      depends_on:
-        - app
-      networks:
-        - mynet
+  web:
+    image: nginx:latest
+    container_name: api_web
+#    build:
+#      context: ./
+#      dockerfile: web.dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+      - ./_docker/prod/nginx/conf.d:/etc/nginx/conf.d
+      - ./storage/app:/var/www/storage/app:ro
+    ports:
+      - 8000:80
+    depends_on:
+      - app
+    networks:
+      - mynet
 
-    db:
-      image: mysql:8.0.25
-      container_name: api_db
-      restart: always
-      volumes:
-        - ./tmp/db:/var/lib/mysql
-      command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
-      environment:
-        MYSQL_DATABASE: ${DB_DATABASE}
-        MYSQL_ROOT_PASSWORD: my-secret-pw
-        MYSQL_PASSWORD: ${DB_PASSWORD}
-        MYSQL_USER: ${DB_USERNAME}
-      ports:
-        - 3306:3306
-      networks:
-        - mynet
+  db:
+    image: mysql:8.0.25
+    container_name: api_db
+    restart: always
+    volumes:
+      - ./tmp/db:/var/lib/mysql
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: my-secret-pw
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    ports:
+      - 3306:3306
+    networks:
+      - mynet
 
-    mailhog:
-      image: mailhog/mailhog:latest
-      logging:
-        driver: 'none'
-      ports:
-        - 1025:1025
-        - 8025:8025
-      networks:
-        - mynet
+  mailhog:
+    image: mailhog/mailhog:latest
+    logging:
+      driver: 'none'
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - mynet
 
-    pma:
-      image: phpmyadmin:latest
-      environment:
-        - PMA_ARBITRARY=1
-        - PMA_HOST=${DB_HOST}
-        - PMA_PORT=${DB_PORT}
-      restart: always
-      depends_on:
-        - db
-      ports:
-        - 8888:
-      networks:
-        - mynet
+  pma:
+    image: phpmyadmin:latest
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=${DB_HOST}
+      - PMA_PORT=${DB_PORT}
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8888:80
+    networks:
+      - mynet
 
 
-  networks:
-    mynet
+networks:
+  mynet:
