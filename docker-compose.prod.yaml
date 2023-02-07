@@ -11,7 +11,7 @@ services:
     depends_on:
       - db
     networks:
-      - mynet
+      - api-network
 
   web:
     image: nginx:latest
@@ -23,19 +23,20 @@ services:
     volumes:
       - ./:/var/www
       - ./_docker/prod/nginx/conf.d:/etc/nginx/conf.d
-      - ./storage/app:/var/www/storage/app:ro
+#      - ./storage/app:/var/www/storage/app:ro
     ports:
       - 8000:80
     depends_on:
       - app
     networks:
-      - mynet
+      - api-network
 
   db:
     image: mysql:8.0.25
     restart: always
     volumes:
-      - /var/lib/mysql:/var/lib/mysql
+      - dbdata:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
 #    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -45,23 +46,11 @@ services:
     ports:
       - 3306:3306
     networks:
-      - mynet
-
-  pma:
-    image: phpmyadmin:latest
-    environment:
-      - PMA_ARBITRARY=1
-      - PMA_HOST=${DB_HOST}
-      - PMA_PORT=${DB_PORT}
-#    restart: always
-    depends_on:
-      - db
-    ports:
-      - 8888:80
-    networks:
-      - mynet
+      - api-network
 
 volumes:
-  phpmyadmin_data:
+  dbdata:
+    driver: local
 networks:
-  mynet:
+  api-network:
+    driver: bridge
