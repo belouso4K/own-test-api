@@ -60,3 +60,7 @@ services:
     networks:
       - api.dev-network
 
+networks:
+  api.dev-network:
+    driver: bridge
+
