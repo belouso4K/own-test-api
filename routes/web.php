@@ -9,5 +9,9 @@ Route::group(['middleware' => 'guest'], function () {
 Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::get('/db', function () {
-    return 'wqfqssesf213';
+    return 'wq111s3';
+});
+
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
 });
