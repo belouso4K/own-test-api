@@ -13,24 +13,6 @@ services:
     networks:
       - api-network
 
-  web:
-    image: nginx:latest
-    container_name: api_web
-#    build:
-#      context: ./
-#      dockerfile: web.dockerfile
-    working_dir: /var/www
-    volumes:
-      - ./:/var/www
-      - ./_docker/prod/nginx/conf.d:/etc/nginx/conf.d
-#      - ./storage/app:/var/www/storage/app:ro
-    ports:
-      - 8000:80
-    depends_on:
-      - app
-    networks:
-      - api-network
-
   db:
     image: mysql:8.0.25
     restart: always
