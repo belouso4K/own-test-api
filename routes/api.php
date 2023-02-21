@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\EmailVerificationController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\API\PostController as PostController;
 use App\Http\Controllers\API\Admin\PostController as AdminPostController;
 use App\Http\Controllers\API\Admin\TagsController;
@@ -14,13 +15,17 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['prefix' => 'v1'], function(){
-
+    Route::post('/logout', [AuthController::class, 'logout']);
     /**
      * Email Routes
      */
 //    Route::post('email/verify/{id}',[EmailVerificationController::class, 'verify'])->name('verificationapi.verify');
 //    Route::post('email/resend', [EmailVerificationController::class, 'resend']);
 
+    Route::group(['middleware' => 'guest'], function () {
+        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/login', [AuthController::class, 'login']);
+    });
     /**
      * Post Routes
      */
@@ -29,6 +34,7 @@ Route::group(['prefix' => 'v1'], function(){
     Route::get('/post/{slug}/comments', [PostCommentsController::class, 'index']);
 
     Route::group(['middleware' => 'auth:sanctum'], function(){
+
         Route::get('/user', [UsersController::class, 'show']);
 
         Route::put('/user/{user}', [UsersController::class, 'update']);
